@@ -16,10 +16,6 @@ first_truck_leaves = datetime.datetime.strptime('8:00:00', '%H:%M:%S').time()
 second_truck_leaves = datetime.datetime.strptime('9:10:00', '%H:%M:%S').time()
 third_truck_leaves = datetime.datetime.strptime('11:00:00', '%H:%M:%S').time()
 
-total_mileage_truck_one = 0
-total_mileage_truck_two = 0
-total_mileage_truck_three = 0
-
 Packages.load_package_data('./data/packages.csv', packages_table)
 Distances.load_distances_data('./data/distances.csv', distance_list)
 Addresses.load_address_data('./data/addresses.csv', address_list)
@@ -149,6 +145,9 @@ def deliver_package(package_id, mileage_count):
     selectedPackage.delivered = True
 
 
+
+
+
 def leave_hub(truck_list, truck_leave_time):
     for package_id in truck_list:
         selectedPackage = packages_table.lookup(package_id)
@@ -192,9 +191,6 @@ def deliver_packages(truck_list, truck_leave_time):
 
 
 get_truck_load_lists()
-print(truck_one)
-print(truck_two)
-print(truck_three)
 print(deliver_packages(truck_one, first_truck_leaves))
 print(deliver_packages(truck_two, second_truck_leaves))
 print(deliver_packages(truck_three, third_truck_leaves))
