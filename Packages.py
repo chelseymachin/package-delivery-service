@@ -4,6 +4,7 @@ from Distances import distance_lookup
 import Utilities
 
 
+# package class declaration
 class Package:
     def __init__(self, package_id, address, city, state, zip, delivery_deadline, mass, special_notes):
         self.package_id = package_id
@@ -23,6 +24,9 @@ class Package:
         return f"{self.package_id}, {self.address}, {self.city}, {self.state}, {self.zip}, {self.delivery_deadline}, {self.mass}, {self.special_notes}, Time of Delivery: {self.time_of_delivery}, Time Left Hub: {self.time_left_hub}, Delivered: {self.delivered}, Loaded: {self.loaded}"
 
 
+# loads data from CSV file as individual Package objects into the
+# packages_table
+
 def load_package_data(file):
     with open(file) as packages_file:
         package_data = csv.reader(packages_file, delimiter=',')
@@ -41,6 +45,11 @@ def load_package_data(file):
             packages_table.insert(package_id, package)
 
 
+# nearest neighbor algorithm for each package in the input truck_list,
+# distance_lookup is used to determine the distance between each package
+# on the truck and the input address.  The smallest distance package ID
+# is returned as the result
+# complexity of O(n)
 def get_nearest_undelivered_package(address, truck_list):
     distances = list()
     for package_id in truck_list:
@@ -57,10 +66,13 @@ def get_nearest_undelivered_package(address, truck_list):
         return distances[0][0]
 
 
+# the input package has its time of delivery and delivered status marked in the package table
+# complexity of O(1)
 def deliver_package(package_id, mileage_count):
     selectedPackage = packages_table.lookup(package_id)
     selectedPackage.time_of_delivery = Utilities.get_delivery_time(selectedPackage.time_left_hub, mileage_count)
     selectedPackage.delivered = True
 
 
+# sets the packages_table as a HashTable object
 packages_table = HashTable()
