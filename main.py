@@ -34,7 +34,7 @@ Addresses.load_address_data('./data/addresses.csv')
 
 # this function is a greedy algorithm that iterates through
 # all packages in the hash table and prioritizes based on a few factors:
-# complexity of O(n)
+# runtime complexity of O(n^2)
 def get_truck_load_lists():
     for i in range(40):
         selectedPackage = Packages.packages_table.lookup(i + 1)
@@ -43,14 +43,13 @@ def get_truck_load_lists():
         # the best fitting truck.  The package is then appended to the truck and
         # the package's loaded status becomes true
 
-        if 'Can only be on truck 2' in selectedPackage.special_notes or 'Delayed on flight' in selectedPackage.special_notes:
+        if 'truck 2' in selectedPackage.special_notes or 'Delayed on flight' in selectedPackage.special_notes:
             truck_two.append(selectedPackage.package_id)
             selectedPackage.loaded = True
             continue
-        elif 'Must be delivered with' in selectedPackage.special_notes or '9:00 AM' in selectedPackage.delivery_deadline:
+        elif '9:00 AM' in selectedPackage.delivery_deadline or 'Must be delivered with' in selectedPackage.special_notes or '10:30 AM' in selectedPackage.delivery_deadline:
             truck_one.append(selectedPackage.package_id)
             selectedPackage.loaded = True
-            continue
 
     # 2. The first package on the first truck is looked up and the
     # get_nearest_neighbors function generates a list of nearest packages
@@ -104,7 +103,7 @@ def get_truck_load_lists():
 # from each package in the table to the input address, then the list is
 # sorted using the utilities sort_function as a key to return the first
 # package ID in the list (the nearest neighbor package)
-# complexity of O(n)
+# runtime complexity of O(n^2)
 def get_nearest_neighbors(address):
     distances = list()
     for i in range(40):
@@ -128,20 +127,42 @@ def package_status_lookup_by_time(input_time):
     for i in range(40):
         selectedPackage = Packages.packages_table.lookup(i + 1)
         if input_time < selectedPackage.time_of_delivery and input_time < selectedPackage.time_left_hub:
-            package_lookup_results.append([f"{selectedPackage.package_id}", "Hasn't left hub yet"])
+            package_lookup_results.append([
+                f"{selectedPackage.package_id}",
+                f"{selectedPackage.address}",
+                f"{selectedPackage.delivery_deadline}",
+                f"{selectedPackage.city}",
+                f"{selectedPackage.zip}",
+                f"{selectedPackage.mass}",
+                "At hub"
+            ])
         elif selectedPackage.time_of_delivery > input_time > selectedPackage.time_left_hub:
-            package_lookup_results.append(
-                [f"{selectedPackage.package_id}", f"Left hub at {selectedPackage.time_left_hub}, not yet delivered"])
+            package_lookup_results.append([
+                f"{selectedPackage.package_id}",
+                f"{selectedPackage.address}",
+                f"{selectedPackage.delivery_deadline}",
+                f"{selectedPackage.city}",
+                f"{selectedPackage.zip}",
+                f"{selectedPackage.mass}",
+                "On truck"
+            ])
         elif input_time > selectedPackage.time_of_delivery and input_time > selectedPackage.time_left_hub:
-            package_lookup_results.append(
-                [f"{selectedPackage.package_id}", f"Delivered at {selectedPackage.time_of_delivery}"])
-    print(tabulate(package_lookup_results, headers=["Package ID", "Current Status"]))
+            package_lookup_results.append([
+                f"{selectedPackage.package_id}",
+                f"{selectedPackage.address}",
+                f"{selectedPackage.delivery_deadline}",
+                f"{selectedPackage.city}",
+                f"{selectedPackage.zip}",
+                f"{selectedPackage.mass}",
+                "Delivered"
+            ])
+    print(tabulate(package_lookup_results, headers=["Package ID", "Address", "Deadline", "City", "Zip", "Weight", "Current Status"]))
 
 
 # looks up status of single package by input id
 # iterates through all packages in table, if the input ID matches one,
 # it gets pulled and the final status data for it is output as tabulated data
-# complexity of O(n)
+# complexity of O(n^2)
 def package_status_lookup_by_id(input_id):
     package_lookup_results = []
     for i in range(40):
@@ -150,12 +171,20 @@ def package_status_lookup_by_id(input_id):
             package_lookup_results.append([
                 f"{selectedPackage.package_id}",
                 f"{selectedPackage.address}",
+                f"{selectedPackage.delivery_deadline}",
+                f"{selectedPackage.city}",
+                f"{selectedPackage.zip}",
+                f"{selectedPackage.mass}",
                 f"{selectedPackage.time_left_hub}",
                 f"{selectedPackage.time_of_delivery}"
             ])
     print(tabulate(package_lookup_results, headers=[
         "Package ID",
         "Address",
+        "Deadline",
+        "City",
+        "Zip",
+        "Weight",
         "Time Left Hub",
         "Time of Delivery"
     ]))
@@ -166,7 +195,7 @@ def package_status_lookup_by_id(input_id):
 # all the packages in the truck have their loaded status set to True
 # all the packages in the truck have the input leave time set as their
 # time_left_hub data
-# complexity of O(n)
+# complexity of O(n^2)
 
 def leave_hub(truck_list, truck_leave_time):
     for package_id in truck_list:
@@ -181,7 +210,7 @@ def leave_hub(truck_list, truck_leave_time):
 # get_nearest_undelivered_package, which returns the closest package
 # to the hub from the truck_list; this package is set as the current_package
 # its distance from the hub is added to the mileage counter
-# complexity of O(n)
+# runtime complexity of O(n^3)
 
 def deliver_packages(truck_list, truck_leave_time):
     leave_hub(truck_list, truck_leave_time)
@@ -243,7 +272,7 @@ print(f"All packages delivered with a total mileage of: {totalMileage}")
 selection = 0
 # user input screen loop
 # user can enter 1 to enter a time to see all package statuses then
-# user can enter 2 to enter an ID and see an individual packages final
+# user can enter 2 to enter an ID and see an individual package's final
 # data
 while selection != 3:
     print("Welcome to the delivery service package lookup system! \n"

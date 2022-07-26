@@ -26,6 +26,7 @@ class Package:
 
 # loads data from CSV file as individual Package objects into the
 # packages_table
+# runtime complexity is O(n)
 
 def load_package_data(file):
     with open(file) as packages_file:
@@ -49,7 +50,7 @@ def load_package_data(file):
 # distance_lookup is used to determine the distance between each package
 # on the truck and the input address.  The smallest distance package ID
 # is returned as the result
-# complexity of O(n)
+# runtime complexity is O(n^2)
 def get_nearest_undelivered_package(address, truck_list):
     distances = list()
     for package_id in truck_list:
@@ -67,7 +68,7 @@ def get_nearest_undelivered_package(address, truck_list):
 
 
 # the input package has its time of delivery and delivered status marked in the package table
-# complexity of O(1)
+# runtime complexity of O(n)
 def deliver_package(package_id, mileage_count):
     selectedPackage = packages_table.lookup(package_id)
     selectedPackage.time_of_delivery = Utilities.get_delivery_time(selectedPackage.time_left_hub, mileage_count)
@@ -75,4 +76,5 @@ def deliver_package(package_id, mileage_count):
 
 
 # sets the packages_table as a HashTable object
+# space complexity is O(n)
 packages_table = HashTable()

@@ -9,12 +9,14 @@ class HashTable:
             self.table.append([])
 
     # gets the bucket index for the specified key that's passed in
+    # runtime complexity is O(1)
     def get_hash(self, key):
         bucket_index = int(key) % len(self.table)
         return bucket_index
 
     # inserts a new key and item pair into the hash table using the get_hash function to find the bucket index that
     # it should be placed in
+    # runtime complexity is O(n)
     def insert(self, key, item):
         bucket_index = self.get_hash(key)
         key_value = [key, item]
@@ -30,6 +32,7 @@ class HashTable:
             self.table[bucket_index].append(key_value)
             return True
 
+    # runtime complexity is O(n)
     def lookup(self, key):
         bucket_index = self.get_hash(key)
         if self.table[bucket_index] is not None:
@@ -38,6 +41,7 @@ class HashTable:
                     return pairedValues[1]
         return None
 
+    # runtime complexity is O(n)
     def remove(self, key):
         bucket_index = self.get_hash(key)
         length = len(self.table[bucket_index])
@@ -50,6 +54,7 @@ class HashTable:
                 return True
         return False
 
+    # runtime complexity is O(n)
     def update(self, key, item):
         bucket_index = self.get_hash(key)
         if self.table[bucket_index] is not None:
@@ -60,6 +65,7 @@ class HashTable:
         else:
             print("this item could not be updated")
 
+    # runtime complexity is O(n)
     def table_length(self):
         count = 0
         for _ in range(10):
